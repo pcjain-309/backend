@@ -22,6 +22,10 @@ from collections import defaultdict
 app = Flask(__name__)
 CORS(app)
 
+
+port = int(os.environ.get('PORT', 5000))
+app.run(host='0.0.0.0', port=port)
+
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'csv'}
 
@@ -66,15 +70,8 @@ with app.app_context():
 
 
 
-#  Function to check allowed file extension
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# Endpoint for generating sales chart
-@app.route('/generate-chart', methods=['GET'])
-def generate_chart():
-    return "Hi"
 
 @app.route('/register', methods=['POST'])
 def register_user():
