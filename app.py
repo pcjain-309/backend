@@ -23,15 +23,13 @@ app = Flask(__name__)
 CORS(app)
 
 
-# port = int(os.environ.get('PORT', 5000))
-# app.run(host='0.0.0.0', port=port)
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'csv'}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Be2d542b6b43G4f3D*4AEF*cAAF1AdEf@monorail.proxy.rlwy.net:29117/railway'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a secure key
+app.config['SECRET_KEY'] = 'your_secret_key_here'  
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'secret'  
@@ -64,7 +62,7 @@ class SalesData(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     order_date = db.Column(db.Date)
     sales = db.Column(db.Float)
-# Initialize the database
+
 with app.app_context():
     db.create_all()
 
@@ -79,7 +77,6 @@ def register_user():
 
     print(data, "Hello")
 
-    # Validate the registration request
     if 'email' not in data or 'password' not in data:
         return jsonify({'error': 'Invalid registration data'}), 400
 
@@ -89,18 +86,7 @@ def register_user():
     # Check if the user already exists
     existing_user = User.query.filter_by(email=email).first()
 
-    print(existing_user)
-    # if existing_user:
-    #     return jsonify({'error': 'Email already registered'}), 400
-
-    # Prompt user for user type (investor or founder)
-    print("Abovr sommm")
     user_type = data.get('userType')
-    print(user_type)
-    # if user_type not in ['investor', 'founder']:
-    #     return jsonify({'error': 'Invalid user type'}), 400
-
-    # Save the user's details
     new_user = User(
         email=email,
         password=password,
@@ -139,8 +125,6 @@ def login():
         return jsonify({'error': 'Invalid email or password.'})
 
     print("Hello")
-    # If the password matches, generate a token for the user
-    # Identity can be any data that is json serializable
     access_token = create_access_token(identity=user.id)
     print(access_token)
     return jsonify(access_token=access_token)
@@ -148,7 +132,6 @@ def login():
 @app.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
-    # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
@@ -167,24 +150,11 @@ def get_user_info():
     else:
         return jsonify({'error': 'User not found'})
 
-# Protect a view with jwt_required, which requires a valid access token
-# in the request to access.
-# @app.route('/protected', methods=['GET'])
-# @jwt_required
-# def protected():
-#     # Access the identity of the current user with get_jwt_identity
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), 200
-
-
 @app.route('/isRegistered/<email>', methods=['GET'])
 def is_registered(email):
-    # Check if the user with the given email is registered
 
-    print("Hello")
     user = User.query.filter_by(email=email).first()
 
-    # Check if the user with the given email exists
     is_registered = (user is not None)
 
     return jsonify({'isRegistered': is_registered})
@@ -210,7 +180,6 @@ def get_interested_investors(startup_id):
 
 
 
-# Endpoint to get all startups
 # Endpoint to get all startups
 @app.route('/allStartups', methods=['GET'])
 @jwt_required()
@@ -317,8 +286,6 @@ def upload_sales_data(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Endpoint to generate sales chart
-# ...
 
 @app.route('/generate-sales-chart', methods=['POST'])
 @jwt_required()
